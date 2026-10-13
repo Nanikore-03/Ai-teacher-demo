@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI คู่ครู — Prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#14213d;--mute:#6b7692;--bg:#e9ecf4;--blue:#2f6bff;--red:#d93a3a;--redbg:#fde8e8;--ok:#1f9d6b;--okbg:#e3f5ec;--line:#e1e5ef}
+*{box-sizing:border-box;margin:0}
+body{font-family:'IBM Plex Sans Thai',sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+button,select{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.hide{display:none!important}
+.phone{max-width:430px;min-height:100vh;margin:0 auto;background:#fff;box-shadow:0 0 30px rgba(20,33,61,.12)}
+#login{padding:60px 28px}#login h1{font-size:30px}#login p{color:var(--mute);margin-bottom:20px}
+label{display:block;font-size:14px;margin:12px 0 4px}
+input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;background:#fff}
+.btn{background:var(--blue);color:#fff;border:0;border-radius:10px;padding:10px 16px;font-weight:500}
+.btn.full{width:100%;margin-top:20px}
+.link{background:none;border:0;color:var(--blue);font-size:14px;padding:8px 0}
+header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:2px solid var(--ink);font-size:14px}
+.out{background:none;border:0;font-size:12px;color:var(--ink)}
+main{padding:18px 18px 100px}
+h2{font-size:21px;margin-bottom:4px}h3{font-size:17px;margin:4px 0 8px}
+.sub{color:var(--mute);margin-bottom:14px;font-size:14px}
+.back{background:none;border:0;font-size:17px;margin-bottom:10px;padding:4px 0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.stat{background:var(--bg);border:0;border-radius:12px;padding:12px 4px;text-align:center;font-size:13px}
+.stat b{font-size:26px;display:block;color:var(--blue)}
+.cal{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:16px}
+.g7{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;font-size:14px}
+.g7 .d{color:var(--mute);font-size:12px}
+.g7 button{border:0;background:none;border-radius:8px;padding:6px 0}
+.g7 button.today{background:var(--blue);color:#fff}
+.row{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:10px;background:#fff;width:100%;text-align:left;font-size:15px}
+.row small{color:var(--mute);display:block;font-size:13px}
+.row.done{opacity:.5;text-decoration:line-through}
+.tag{padding:2px 10px;border-radius:99px;font-size:12px;white-space:nowrap}
+.bad{background:var(--redbg);color:var(--red)}.ok{background:var(--okbg);color:var(--ok)}.warn{background:#fff1d6;color:#9a6200}
+.add{background:var(--bg);border-radius:12px;padding:12px;margin:14px 0;display:grid;gap:8px}
+.pcard{border:2px solid var(--ink);border-radius:20px;padding:14px;margin-bottom:18px;position:relative}
+.pcard .top{display:flex;gap:14px}
+.ava{width:78px;height:78px;border:2px solid var(--ink);border-radius:50%;display:grid;place-items:center}
+.who{text-align:center;font-size:13px;margin-top:4px}
+.info{flex:1;font-size:13px;display:grid;gap:4px;padding-right:26px}
+.info div{display:flex;gap:6px;align-items:center}.info span{white-space:nowrap}
+.info input{padding:3px 6px;font-size:13px;border-radius:6px}
+.pencil{position:absolute;top:8px;right:8px;border:1px solid var(--line);background:#fff;border-radius:8px;width:30px;height:30px}
+.pencil.on{background:var(--blue);color:#fff}
+.issue{margin-top:10px;font-size:13px;text-align:right}.issue em{color:var(--red);font-style:normal}
+.gr{display:grid;gap:8px;margin-bottom:18px;font-size:14px}
+.gr div{display:flex;gap:8px;align-items:center}.gr span{width:92px}
+.gr input{border:0;border-bottom:2px solid var(--ink);border-radius:0;padding:2px 4px}
+.ai{border:2px solid var(--ink);border-radius:18px;padding:14px}
+.ai ul{padding-left:18px;margin:6px 0 12px;font-size:14px}
+.note{background:#eef2ff;border-radius:10px;padding:10px 12px;margin-top:10px;font-size:14px}
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:#fff;border-top:2px solid var(--ink);display:flex;justify-content:space-around;padding:8px 0 10px}
+nav button{background:none;border:0;display:grid;justify-items:center;font-size:10px;color:var(--mute);padding:2px 14px}
+nav button.on{color:var(--blue);font-weight:700}
+nav svg{width:30px;height:30px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+</style></head><body><div class="phone">
+
+<section id="login"><form onsubmit="return go('home')">
+<h1>AI คู่ครู</h1><p>AI คู่ครู ที่คู่ควร (ข้อมูลทั้งหมดเป็นข้อมูลสมมติ)</p>
+<label for="u">Username / Email / Phone</label><input id="u" value="somsri@school.ac.th">
+<label for="p">Password</label><input id="p" type="password" value="demo1234">
+<button class="btn full" type="submit">เข้าสู่ระบบ</button>
+<button class="link" type="button">สมัครสมาชิก</button> · <button class="link" type="button">ลืมรหัสผ่าน?</button>
+</form></section>
+
+<div id="app" class="hide">
+<header><div>สวัสดี คุณครูสมศรี · โรงเรียนบ้านหนองแวง</div><button class="out" onclick="logout()">Log out ⎋</button></header>
+<main>
+<section id="home">
+ <div class="stats">
+  <button class="stat" onclick="go('subjects')"><b id="cS"></b>วิชาที่สอน</button>
+  <button class="stat" onclick="go('students')"><b id="cN"></b>นักเรียน</button>
+  <button class="stat" onclick="go('tasks')"><b id="cT"></b>งานค้าง</button>
+ </div>
+ <div class="cal"><b>สิงหาคม 2569</b>
+  <div class="g7" style="margin-top:6px"><span class="d">อา</span><span class="d">จ</span><span class="d">อ</span><span class="d">พ</span><span class="d">พฤ</span><span class="d">ศ</span><span class="d">ส</span></div>
+  <div class="g7" id="days"></div></div>
+ <h3>สิ่งที่ต้องแก้ไข</h3><div id="todo"></div>
+</section>
+
+<section id="day" class="hide">
+ <button class="back" onclick="go('home')">‹ กลับหน้าหลัก</button>
+ <h2 id="dayTitle"></h2><p class="sub">ตารางและงานของวันนี้</p>
+ <div class="row"><div>คาบ 2 · วิทยาศาสตร์ ม.3/2<small>แรงและการเคลื่อนที่</small></div><span class="tag ok">พร้อม</span></div>
+ <div class="row"><div>คาบ 4 · คณิตศาสตร์ ม.2/1<small>มีนักเรียนคะแนนต่ำ ควรทบทวนก่อนสอน</small></div><span class="tag bad">ทบทวน</span></div>
+ <button class="btn" onclick="plan.hidden=false">ให้ AI เตรียมแผนการสอน</button>
+ <div class="note" id="plan" hidden><b>แผนการสอน (ตัวอย่าง)</b><br>5 นาที ทบทวนสมการเชิงเส้น → 20 นาที สอนเนื้อหาใหม่ → 15 นาที ฝึกทำโจทย์ → 5 นาที สรุป</div>
+</section>
+
+<section id="subjects" class="hide">
+ <button class="back" onclick="go('home')">‹ กลับหน้าหลัก</button>
+ <h2>วิชาที่สอน</h2><p class="sub">เพิ่มวิชาที่คุณครูสอนได้</p><div id="subList"></div>
+ <div class="add"><label for="sn" style="margin:0">ชื่อวิชา</label><input id="sn" placeholder="เช่น ภาษาอังกฤษ">
+  <label for="sc" style="margin:0">ชั้น</label><input id="sc" placeholder="เช่น ม.2/1">
+  <button class="btn" onclick="addSub()">เพิ่มวิชา</button></div>
+</section>
+
+<section id="students" class="hide">
+ <button class="back" onclick="go('home')">‹ กลับหน้าหลัก</button>
+ <h2>นักเรียนทั้งหมด</h2><p class="sub" id="stSub"></p>
+ <input id="q" placeholder="ค้นหาชื่อนักเรียน" oninput="renderStudents()" style="margin-bottom:12px"><div id="stList"></div>
+</section>
+
+<section id="detail" class="hide">
+ <button class="back" onclick="go('students')">‹ กลับรายชื่อนักเรียน</button>
+ <div class="pcard"><button class="pencil" id="pen" onclick="toggleEdit()" aria-label="แก้ไขข้อมูล">✎</button>
+  <div class="top"><div><div class="ava"><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#14213d" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 15-5 16 0"/></svg></div><div class="who" id="nick"></div></div><div class="info" id="info"></div></div>
+  <div class="issue" id="issue"></div></div>
+ <h3>ผลการเรียนรายวิชา</h3><div class="gr" id="grades"></div>
+ <div class="ai"><h3 style="margin:0">คำแนะนำจาก AI</h3><ul id="advice"></ul>
+  <button class="btn" onclick="quiz()">สร้างชุดข้อสอบซ่อมเสริม</button><div id="quizOut"></div></div>
+</section>
+
+<section id="tasks" class="hide">
+ <button class="back" onclick="go('home')">‹ กลับหน้าหลัก</button>
+ <h2>งานค้างของฉัน</h2><p class="sub">แตะงานเพื่อทำเครื่องหมายว่าเสร็จแล้ว</p><div id="taskList"></div>
+ <div class="add"><label for="tt" style="margin:0">ชื่องาน</label><input id="tt" placeholder="เช่น เบิกงบอุปกรณ์">
+  <label for="tk" style="margin:0">ประเภท</label><select id="tk"><option>งานเอกสาร</option><option>งานดำเนินเรื่อง</option><option>งานสอน</option><option>อื่นๆ</option></select>
+  <button class="btn" onclick="addTask()">เพิ่มงาน</button></div>
+</section>
+
+<section id="notify" class="hide"><h2>การแจ้งเตือน</h2><p class="sub">อัปเดตล่าสุด 14 สิงหาคม 2569</p><div id="notiList"></div></section>
+</main>
+<nav>
+ <button data-p="home" class="on"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg>HOME</button>
+ <button data-p="students"><svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="9" r="2.5"/><path d="M2 20c0-5 12-5 12 0M14 15c4-1 8 1 8 5"/></svg>STUDENTS</button>
+ <button data-p="notify"><svg viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 0112 0v6l2 2H4zM10 21h4"/></svg>NOTIFICATION</button>
+</nav></div></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const SUBJ=['คณิตศาสตร์','วิทยาศาสตร์','ภาษาไทย','ประวัติศาสตร์'];
+const raw=`ไดโนเสาร์|ไทรันโน เจริญผล|42,61,74,68|20|0
+มะลิ|มาลี ใจดี|70,66,80,72|6|1
+กล้า|กล้าหาญ มั่นคง|82,75,69,77|0|1
+ฟ้า|ฟ้าใส สุขสันต์|91,88,85,90|1|1
+ต้น|ต้นกล้า รักเรียน|55,48,62,70|3|1
+นุ่น|นุ่นนิ่ม อ่อนโยน|77,80,73,69|2|1
+เจ|เจษฎา พากเพียร|64,59,71,66|4|1
+แพรว|แพรวา สดใส|88,92,90,86|0|1
+บอส|บุญส่ง ตั้งใจ|47,52,60,58|9|0
+ปลา|ปลาทอง ว่ายน้ำ|73,70,76,81|1|1
+โฟม|ภูมิ เจริญสุข|68,74,65,72|2|1
+ใบเตย|ใบเตย หอมหวน|85,83,88,79|0|1
+เอ็ม|เอกชัย มีสุข|59,63,57,61|5|1
+ก้อง|ก้องภพ สงบสุข|79,77,82,84|1|1
+น้ำ|น้ำฝน ชุ่มชื่น|90,87,93,89|0|1
+พีท|พิทักษ์ ยุติธรรม|51,46,58,64|7|0
+มีน|มีนา ดาวเรือง|75,78,72,70|2|1
+ไอซ์|ไอศูรย์ ยิ้มแย้ม|66,69,74,67|3|1
+กุ๊ก|กุลธิดา แสนดี|81,79,84,86|1|1
+เบนซ์|เบญจพล ขยันยิ่ง|62,57,63,60|4|1
+ข้าว|ข้าวหอม พอเพียง|87,85,81,88|0|1
+แทน|แทนคุณ ซื่อตรง|70,73,68,75|2|1
+หมิว|หมิวหมิว น่ารัก|58,64,70,62|6|1
+ภูมิ|ภูมิพัฒน์ ก้าวหน้า|76,81,78,74|1|1`;
+const def=()=>raw.split('\n').map((l,i)=>{const p=l.split('|');return{n:p[0],f:p[1],c:'ม.2/1',no:String(i+1),tel:'08'+(1000000+i*7919).toString().slice(0,7),par:'ผู้ปกครองของ'+p[0],ptel:'09'+(2000000+i*6151).toString().slice(0,7),s:p[2].split(',').map(Number),a:+p[3],leave:p[4]==='1'}});
+let D;
+try{D=JSON.parse(localStorage.getItem('akk'))}catch(e){}
+if(!D)D={st:def(),sub:[['คณิตศาสตร์','ม.2/1'],['วิทยาศาสตร์','ม.3/2'],['ภาษาไทย','ม.2/1'],['ประวัติศาสตร์','ม.2/1']],tasks:[{t:'เบิกงบอุปกรณ์',k:'งานดำเนินเรื่อง',d:0},{t:'รายงานผลการเรียน',k:'งานเอกสาร',d:0}]};
+const save=()=>{try{localStorage.setItem('akk',JSON.stringify(D))}catch(e){}};
+let cur=0,editing=false;
+// AI rules
+function status(s){const low=s.s.filter(x=>x<50).length;return low||s.a>=10?['bad','เสี่ยง']:(s.s.some(x=>x<60)||s.a>=3)?['warn','ติดตาม']:['ok','ปกติ']}
+function advice(s){const r=[];s.s.forEach((x,i)=>{if(x<50)r.push('คะแนน'+SUBJ[i]+'ต่ำกว่าเกณฑ์ ควรทบทวนและสอนซ่อมเสริม');else if(x<60)r.push('คะแนน'+SUBJ[i]+'ค่อนข้างต่ำ ควรติดตามใกล้ชิด')});
+ if(s.a>=10)r.push('ขาดเรียนสะสมมาก ควรติดต่อผู้ปกครองสัปดาห์นี้');else if(s.a>=3)r.push('ขาดเรียน '+s.a+' ครั้ง ควรติดตามการเข้าเรียน');
+ if(!r.length)r.push('ผลการเรียนและการเข้าเรียนปกติดี ควรส่งเสริมต่อเนื่อง');return r}
+// nav
+function go(p){login.classList.add('hide');app.classList.remove('hide');
+ ['home','day','subjects','students','detail','tasks','notify'].forEach(x=>$(x).classList.toggle('hide',x!==p));
+ const tab={detail:'students',day:'home',subjects:'home',tasks:'home'}[p]||p;
+ document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.p===tab));
+ if(p==='home')renderHome();if(p==='students')renderStudents();if(p==='subjects')renderSubs();if(p==='tasks')renderTasks();if(p==='notify')renderNoti();
+ scrollTo(0,0);return false}
+function logout(){app.classList.add('hide');login.classList.remove('hide')}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.p));
+// home
+function openStudent(i){cur=i;editing=false;renderDetail();go('detail')}
+function renderHome(){cS.textContent=D.sub.length;cN.textContent=D.st.length;cT.textContent=D.tasks.filter(t=>!t.d).length;
+ const risk=D.st.map((s,i)=>[s,i]).filter(([s])=>status(s)[0]==='bad');
+ $('todo').innerHTML=risk.map(([s,i])=>`<button class="row" onclick="openStudent(${i})"><div>${s.n}<small>${advice(s)[0]}</small></div><span class="tag bad">เสี่ยง</span></button>`).join('')+
+ D.tasks.filter(t=>!t.d).map(t=>`<button class="row" onclick="go('tasks')"><div>${t.t}<small>${t.k}</small></div><span class="tag warn">ค้าง</span></button>`).join('')||'<p class="sub">ไม่มีงานที่ต้องแก้ไข</p>'}
+let h='';for(let i=0;i<6;i++)h+='<span></span>';
+for(let d=1;d<=31;d++)h+=`<button class="${d===14?'today':''}" onclick="dayTitle.textContent='${d} สิงหาคม 2569';go('day')">${d}</button>`;
+$('days').innerHTML=h;
+// subjects
+function renderSubs(){$('subList').innerHTML=D.sub.map(s=>`<div class="row"><div>${s[0]}<small>${s[1]}</small></div></div>`).join('')}
+function addSub(){const n=sn.value.trim();if(!n)return;D.sub.push([n,sc.value.trim()||'-']);sn.value=sc.value='';save();renderSubs()}
+// students
+function renderStudents(){const k=q.value.trim();$('stSub').textContent='ทั้งหมด '+D.st.length+' คน';
+ $('stList').innerHTML=D.st.map((s,i)=>[s,i]).filter(([s])=>!k||s.n.includes(k)||s.f.includes(k)).map(([s,i])=>{const t=status(s);
+ return`<button class="row" onclick="openStudent(${i})"><div>${s.n}<small>${s.c} · เลขที่ ${s.no}</small></div><span class="tag ${t[0]}">${t[1]}</span></button>`}).join('')}
+// detail
+const F=[['ชื่อจริง','f'],['ชั้น','c'],['เลขที่','no'],['เบอร์ติดต่อ','tel'],['ผู้ปกครอง','par'],['เบอร์ติดต่อ','ptel']];
+function renderDetail(){const s=D.st[cur];$('nick').innerHTML='ชื่อเล่น:<br>'+s.n;
+ $('info').innerHTML=F.map(f=>`<div><span>${f[0]}:</span>${editing?`<input data-k="${f[1]}" value="${s[f[1]]}">`:s[f[1]]}</div>`).join('');
+ $('grades').innerHTML=SUBJ.map((n,i)=>`<div><span>${n}:</span>${editing?`<input type="number" min="0" max="100" data-g="${i}" value="${s.s[i]}">`:`<b style="color:${s.s[i]<50?'var(--red)':'inherit'}">${s.s[i]}%</b>`}</div>`).join('');
+ $('issue').innerHTML=`ปัญหา: ขาดเรียน ${editing?`<input type="number" id="ab" value="${s.a}" style="width:60px;display:inline;padding:2px 6px">`:s.a} ครั้ง/<em>${s.leave?'(มีใบลา)':'(ไม่มี)'}</em>`;
+ $('advice').innerHTML=advice(s).map(a=>'<li>'+a+'</li>').join('');$('quizOut').innerHTML='';
+ pen.classList.toggle('on',editing);pen.textContent=editing?'✓':'✎'}
+function toggleEdit(){if(editing){const s=D.st[cur];
+ document.querySelectorAll('#info input').forEach(i=>s[i.dataset.k]=i.value);
+ document.querySelectorAll('#grades input').forEach(i=>s.s[i.dataset.g]=Math.min(100,Math.max(0,+i.value||0)));
+ s.a=+ab.value||0;save()}
+ editing=!editing;renderDetail()}
+function quiz(){const s=D.st[cur];const w=s.s.map((x,i)=>[x,i]).filter(a=>a[0]<60).map(a=>SUBJ[a[1]]);
+ $('quizOut').innerHTML='<div class="note">'+(w.length?'สร้างข้อสอบซ่อมเสริมแล้ว: '+w.map(x=>x+' 5 ข้อ').join(', ')+' (ตัวอย่าง)':'ไม่มีวิชาที่ต้องซ่อมเสริม')+'</div>'}
+// tasks
+function renderTasks(){$('taskList').innerHTML=D.tasks.map((t,i)=>`<button class="row ${t.d?'done':''}" onclick="D.tasks[${i}].d^=1;save();renderTasks()"><div>${t.t}<small>${t.k}</small></div><span class="tag ${t.d?'ok':'warn'}">${t.d?'เสร็จ':'ค้าง'}</span></button>`).join('')||'<p class="sub">ยังไม่มีงาน</p>'}
+function addTask(){const n=tt.value.trim();if(!n)return;D.tasks.push({t:n,k:tk.value,d:0});tt.value='';save();renderTasks()}
+// notifications
+function renderNoti(){const r=D.st.map((s,i)=>[s,i]).filter(([s])=>status(s)[0]==='bad');
+ $('notiList').innerHTML=r.map(([s,i])=>`<button class="row" onclick="openStudent(${i})"><div>${s.n}: ${advice(s)[0]}</div><span class="tag bad">ใหม่</span></button>`).join('')+'<div class="row"><div>คาบ 2 วิทยาศาสตร์ ม.3/2 — AI เตรียมแผนให้แล้ว</div><span class="tag ok">พร้อม</span></div>'}
+</script></body></html>
